@@ -1,0 +1,150 @@
+# Configuration pour la génération de données ESG & Carbon Analytics
+
+# Période de simulation
+start_date: "2023-01-01"
+end_date: "2025-12-31"
+baseline_year: 2023  # Année de référence pour les objectifs
+
+# Sites opérationnels
+sites:
+  count: 12
+  types:
+    - type: "manufacturing_plant"
+      count: 5
+      energy_intensity: "high"  # kWh par unité produite
+    - type: "warehouse"
+      count: 4
+      energy_intensity: "medium"
+    - type: "office"
+      count: 3
+      energy_intensity: "low"
+  
+  regions:
+    - name: "Europe"
+      count: 6
+      renewable_energy_pct: 0.45  # 45% d'énergie renouvelable
+    - name: "North America"
+      count: 4
+      renewable_energy_pct: 0.30
+    - name: "Asia"
+      count: 2
+      renewable_energy_pct: 0.15
+
+# Assets (équipements)
+assets:
+  count: 250
+  categories:
+    - name: "production_line"
+      count: 80
+      avg_power_kw: 150
+      efficiency_class: ["A", "B", "C"]  # Classe énergétique
+    - name: "hvac"
+      count: 60
+      avg_power_kw: 50
+      efficiency_class: ["A", "B", "C", "D"]
+    - name: "lighting"
+      count: 70
+      avg_power_kw: 10
+      efficiency_class: ["A", "B"]
+    - name: "it_equipment"
+      count: 40
+      avg_power_kw: 5
+      efficiency_class: ["A", "B", "C"]
+
+# Consommation énergétique
+energy_consumption:
+  monthly_records: true  # Données mensuelles
+  sources:
+    - type: "electricity"
+      avg_kwh_per_site_per_month: 50000
+      cost_per_kwh_eur: 0.12
+    - type: "natural_gas"
+      avg_kwh_per_site_per_month: 30000
+      cost_per_kwh_eur: 0.08
+    - type: "diesel"
+      avg_kwh_per_site_per_month: 5000
+      cost_per_kwh_eur: 0.15
+
+# Production volumes
+production:
+  units_per_month: 10000  # Par site manufacturing
+  unit: "widgets"
+
+# Facteurs d'émission (kg CO₂ par kWh)
+emission_factors:
+  electricity:
+    europe: 0.25  # Grid mix
+    north_america: 0.40
+    asia: 0.60
+  natural_gas: 0.20  # Constant
+  diesel: 0.27  # Constant
+  renewable: 0.0  # Énergie renouvelable = 0 émissions
+
+# Fournisseurs
+suppliers:
+  count: 80
+  segments:
+    - name: "strategic"
+      count: 15
+      avg_annual_spend_eur: 500000
+      esg_rating: ["A", "B"]  # Meilleurs ratings
+    - name: "preferred"
+      count: 35
+      avg_annual_spend_eur: 150000
+      esg_rating: ["B", "C"]
+    - name: "transactional"
+      count: 30
+      avg_annual_spend_eur: 30000
+      esg_rating: ["C", "D"]
+
+# Objectifs ESG (réduction par rapport à baseline 2023)
+targets:
+  2024:
+    scope1_reduction_pct: 0.05  # -5% vs 2023
+    scope2_reduction_pct: 0.08  # -8% vs 2023
+    scope3_reduction_pct: 0.03  # -3% vs 2023
+    renewable_energy_pct: 0.35  # 35% d'énergie renouvelable
+  2025:
+    scope1_reduction_pct: 0.12  # -12% vs 2023
+    scope2_reduction_pct: 0.15  # -15% vs 2023
+    scope3_reduction_pct: 0.08  # -8% vs 2023
+    renewable_energy_pct: 0.50  # 50% d'énergie renouvelable
+
+# Rapports de durabilité (texte)
+sustainability_reports:
+  count: 36  # 1 par site par an (12 sites × 3 ans)
+  length_words: 500  # Longueur moyenne
+
+# Notes d'audit (texte)
+audit_notes:
+  count: 80  # Audits aléatoires
+  length_words: 300
+  findings: ["positive", "neutral", "negative"]  # Distribution 40%, 40%, 20%
+
+# Scénarios d'analyse
+scenarios:
+  renewable_energy_ramp:
+    enabled: true
+    description: "Augmentation progressive des énergies renouvelables"
+    year_2023: 0.25
+    year_2024: 0.35
+    year_2025: 0.50
+  
+  scope3_suppliers_risk:
+    enabled: true
+    description: "Identification fournisseurs à fort impact Scope 3"
+    high_risk_count: 10  # 10 fournisseurs problématiques
+    impact_multiplier: 2.5  # 2.5x les émissions normales
+  
+  site_performance_variance:
+    enabled: true
+    description: "Variance de performance entre sites"
+    best_performers: ["SITE_001", "SITE_006"]  # 2 sites exemplaires
+    underperformers: ["SITE_004", "SITE_009"]  # 2 sites en difficulté
+
+# Format de sortie
+output:
+  encoding: "utf-8"
+  decimal_separator: "."
+  date_format: "%Y-%m-%d"
+  currency: "EUR"
