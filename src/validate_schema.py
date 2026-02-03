@@ -45,7 +45,7 @@ class SchemaValidator:
         print("--- Validation ESG Tables ---")
         
         # emissions (CRITIQUE pour Carbon Footprint)
-        emissions = self.load_csv('esg/emissions.csv')
+        emissions = self.load_csv('esg/fact_carbon_emissions.csv')
         if emissions is not None:
             self.check_columns(emissions, 'emissions', [
                 'emission_id', 'site_id', 'scope', 'emission_date',
@@ -74,7 +74,7 @@ class SchemaValidator:
                     )
         
         # targets (CRITIQUE pour Target Achievement)
-        targets = self.load_csv('esg/targets.csv')
+        targets = self.load_csv('esg/dim_targets.csv')
         if targets is not None:
             self.check_columns(targets, 'targets', [
                 'target_id', 'scope', 'baseline_year', 'target_year',
@@ -82,14 +82,14 @@ class SchemaValidator:
             ])
         
         # sites
-        sites = self.load_csv('esg/sites.csv')
+        sites = self.load_csv('operations/dim_sites.csv')
         if sites is not None:
             self.check_columns(sites, 'sites', [
                 'site_id', 'site_name', 'country', 'site_type', 'production_capacity'
             ])
         
         # energy_consumption
-        energy = self.load_csv('esg/energy_consumption.csv')
+        energy = self.load_csv('operations/fact_energy_consumption.csv')
         if energy is not None:
             self.check_columns(energy, 'energy_consumption', [
                 'consumption_id', 'site_id', 'energy_date', 'energy_type',
@@ -103,7 +103,7 @@ class SchemaValidator:
         print("--- Validation Supplier Tables ---")
         
         # suppliers (CRITIQUE pour Supply Chain Risk)
-        suppliers = self.load_csv('esg/suppliers.csv')
+        suppliers = self.load_csv('esg/dim_suppliers.csv')
         if suppliers is not None:
             self.check_columns(suppliers, 'suppliers', [
                 'supplier_id', 'supplier_name', 'country', 'category',
@@ -124,7 +124,7 @@ class SchemaValidator:
                     print(f"  ✅ suppliers.risk_level correct: {actual_risks}")
         
         # audits
-        audits = self.load_csv('esg/audits.csv')
+        audits = self.load_csv('esg/fact_audits.csv')
         if audits is not None:
             self.check_columns(audits, 'audits', [
                 'audit_id', 'site_id', 'audit_date', 'audit_type',
@@ -138,10 +138,10 @@ class SchemaValidator:
         print("--- Validation Relations (Foreign Keys) ---")
         
         # Charger les tables principales
-        emissions = self.load_csv('esg/emissions.csv')
-        sites = self.load_csv('esg/sites.csv')
-        energy = self.load_csv('esg/energy_consumption.csv')
-        audits = self.load_csv('esg/audits.csv')
+        emissions = self.load_csv('esg/fact_carbon_emissions.csv')
+        sites = self.load_csv('operations/dim_sites.csv')
+        energy = self.load_csv('operations/fact_energy_consumption.csv')
+        audits = self.load_csv('esg/fact_audits.csv')
         
         if emissions is None or sites is None:
             self.errors.append("Impossible de valider les relations: tables manquantes")
