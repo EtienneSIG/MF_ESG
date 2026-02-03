@@ -536,3 +536,4 @@ CALCULATE(
 
 **Dernière mise à jour** : Décembre 2024  
 **Version** : 1.0
+

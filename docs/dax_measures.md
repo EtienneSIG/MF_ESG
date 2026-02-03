@@ -15,9 +15,9 @@ Ce fichier contient toutes les mesures DAX testées et validées pour le semanti
 ## Relations Clés
 
 ```
-sites[site_id] 1 ----→ * emissions[site_id]
-sites[site_id] 1 ----→ * energy_consumption[site_id]
-sites[site_id] 1 ----→ * audits[site_id]
+dim_sites[site_id] 1 ----→ * emissions[site_id]
+dim_sites[site_id] 1 ----→ * fact_energy_consumption[site_id]
+dim_sites[site_id] 1 ----→ * audits[site_id]
 targets[scope] * ----→ 1 emissions[scope] (many-to-one on scope text)
 ```
 
@@ -154,7 +154,7 @@ Intensité carbone (kg CO2e par unité produite).
 ```dax
 Carbon Intensity = 
 VAR TotalEmissions = [Total Emissions] * 1000  -- Conversion tonnes → kg
-VAR ProductionVolume = SUM(sites[production_capacity])  -- ou table production
+VAR ProductionVolume = SUM(dim_sites[production_capacity])  -- ou table production
 RETURN
     DIVIDE(TotalEmissions, ProductionVolume, BLANK())
 ```
@@ -172,7 +172,7 @@ Intensité Scope 1.
 ```dax
 Scope 1 Intensity = 
 VAR Scope1 = [Scope 1 Emissions] * 1000
-VAR ProductionVolume = SUM(sites[production_capacity])
+VAR ProductionVolume = SUM(dim_sites[production_capacity])
 RETURN
     DIVIDE(Scope1, ProductionVolume, BLANK())
 ```
@@ -189,7 +189,7 @@ Intensité Scope 2.
 ```dax
 Scope 2 Intensity = 
 VAR Scope2 = [Scope 2 Emissions] * 1000
-VAR ProductionVolume = SUM(sites[production_capacity])
+VAR ProductionVolume = SUM(dim_sites[production_capacity])
 RETURN
     DIVIDE(Scope2, ProductionVolume, BLANK())
 ```
@@ -325,7 +325,7 @@ Consommation énergétique totale.
 
 ```dax
 Total Energy Consumption = 
-SUM(energy_consumption[consumption_mwh])
+SUM(fact_energy_consumption[consumption_mwh])
 ```
 
 **Format:** MWh
@@ -340,8 +340,8 @@ SUM(energy_consumption[consumption_mwh])
 ```dax
 Renewable Energy = 
 CALCULATE(
-    SUM(energy_consumption[consumption_mwh]),
-    energy_consumption[renewable] = TRUE()
+    SUM(fact_energy_consumption[consumption_mwh]),
+    fact_energy_consumption[renewable] = TRUE()
 )
 ```
 
@@ -357,8 +357,8 @@ CALCULATE(
 ```dax
 Fossil Energy = 
 CALCULATE(
-    SUM(energy_consumption[consumption_mwh]),
-    energy_consumption[renewable] = FALSE()
+    SUM(fact_energy_consumption[consumption_mwh]),
+    fact_energy_consumption[renewable] = FALSE()
 )
 ```
 
@@ -393,7 +393,7 @@ Intensité énergétique.
 ```dax
 Energy Intensity = 
 VAR TotalEnergy = [Total Energy Consumption]
-VAR ProductionVolume = SUM(sites[production_capacity])
+VAR ProductionVolume = SUM(dim_sites[production_capacity])
 RETURN
     DIVIDE(TotalEnergy, ProductionVolume, BLANK())
 ```
@@ -411,7 +411,7 @@ Nombre total de fournisseurs.
 
 ```dax
 Total Suppliers = 
-DISTINCTCOUNT(suppliers[supplier_id])
+DISTINCTCOUNT(dim_suppliers[supplier_id])
 ```
 
 **Format:** Nombre entier
@@ -426,8 +426,8 @@ Fournisseurs à haut risque.
 ```dax
 High-Risk Suppliers = 
 CALCULATE(
-    DISTINCTCOUNT(suppliers[supplier_id]),
-    suppliers[risk_level] IN {"high", "critical"}
+    DISTINCTCOUNT(dim_suppliers[supplier_id]),
+    dim_suppliers[risk_level] IN {"high", "critical"}
 )
 ```
 
@@ -463,7 +463,7 @@ Exposition carbone fournisseurs (spend × intensity).
 Supplier Carbon Exposure = 
 SUMX(
     suppliers,
-    suppliers[annual_spend_eur] * suppliers[carbon_intensity] / 1000
+    dim_suppliers[annual_spend_eur] * dim_suppliers[carbon_intensity] / 1000
 )
 ```
 
@@ -478,7 +478,7 @@ Intensité carbone moyenne fournisseurs.
 
 ```dax
 Avg Supplier Carbon Intensity = 
-AVERAGE(suppliers[carbon_intensity])
+AVERAGE(dim_suppliers[carbon_intensity])
 ```
 
 **Format:** kg CO2e/EUR spent
@@ -495,7 +495,7 @@ Exposition des 10 plus gros fournisseurs.
 Top 10 Suppliers Exposure = 
 CALCULATE(
     [Supplier Carbon Exposure],
-    TOPN(10, suppliers, suppliers[annual_spend_eur], DESC)
+    TOPN(10, suppliers, dim_suppliers[annual_spend_eur], DESC)
 )
 ```
 
@@ -586,7 +586,7 @@ RETURN
 Emissions by Site = 
 CALCULATE(
     [Total Emissions],
-    ALLEXCEPT(sites, sites[site_id])
+    ALLEXCEPT(sites, dim_sites[site_id])
 )
 ```
 
@@ -603,7 +603,7 @@ Site avec meilleures performances.
 ```dax
 Best Performing Site = 
 MINX(
-    VALUES(sites[site_name]),
+    VALUES(dim_sites[site_name]),
     [Carbon Intensity]
 )
 ```
@@ -620,7 +620,7 @@ Site avec moins bonnes performances.
 ```dax
 Worst Performing Site = 
 MAXX(
-    VALUES(sites[site_name]),
+    VALUES(dim_sites[site_name]),
     [Carbon Intensity]
 )
 ```
@@ -770,3 +770,4 @@ Pour améliorer les performances:
 - Carbon Intensity: variable selon industrie
 - High-Risk Suppliers: < 10%
 - Target Achievement: >= 90%
+
