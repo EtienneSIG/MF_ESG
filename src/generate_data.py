@@ -664,16 +664,16 @@ def main():
     print()
     
     # Sauvegarder Operations
-    save_to_csv(sites, 'sites.csv', OPERATIONS_DIR)
-    save_to_csv(assets, 'assets.csv', OPERATIONS_DIR)
-    save_to_csv(energy_consumption, 'energy_consumption.csv', OPERATIONS_DIR)
-    save_to_csv(production_volumes, 'production_volumes.csv', OPERATIONS_DIR)
+    save_to_csv(sites, 'dim_sites.csv', OPERATIONS_DIR)
+    save_to_csv(assets, 'dim_assets.csv', OPERATIONS_DIR)
+    save_to_csv(energy_consumption, 'fact_energy_consumption.csv', OPERATIONS_DIR)
+    save_to_csv(production_volumes, 'fact_production_volumes.csv', OPERATIONS_DIR)
     
     # Sauvegarder ESG
-    save_to_csv(emission_factors, 'emission_factors.csv', ESG_DIR)
-    save_to_csv(carbon_emissions, 'carbon_emissions.csv', ESG_DIR)
-    save_to_csv(suppliers, 'suppliers.csv', ESG_DIR)
-    save_to_csv(supplier_emissions, 'supplier_emissions.csv', ESG_DIR)
+    save_to_csv(emission_factors, 'dim_emission_factors.csv', ESG_DIR)
+    save_to_csv(carbon_emissions, 'fact_carbon_emissions.csv', ESG_DIR)
+    save_to_csv(suppliers, 'dim_suppliers.csv', ESG_DIR)
+    save_to_csv(supplier_emissions, 'fact_supplier_emissions.csv', ESG_DIR)
     
     print()
     print("=" * 80)
